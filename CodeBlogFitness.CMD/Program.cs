@@ -16,20 +16,57 @@ namespace CodeBlogFitness.CMD
             Console.WriteLine("Введите ваше имя ");
             var name = Console.ReadLine();
 
-            Console.WriteLine("Введите ваш пол ");
-            var gender = Console.ReadLine();
+            var userController = new UserController(name);
+            if (userController.IsNewUser)
+            {
+                Console.WriteLine("Введите пол: ");
+                var gender = Console.ReadLine();
+                DateTime birthDate = ParseDateTime(); ;
+                double weight = ParseDouble("вес");
+                double height = ParseDouble("рост");
 
-            Console.WriteLine("Введите вашу дату рождения ");
-            var birthDate =DateTime.Parse(Console.ReadLine()); // TODO: Переписать
+                while (true)
+                {
+                    Console.WriteLine("Введите дату рождения(dd:MM:yyyy): ");
+                    if (DateTime.TryParse(Console.ReadLine(), out  birthDate))
+                    {
+                        break;
+                    }else Console.WriteLine("Неверный формат даты: ");
+                }
 
-            Console.WriteLine("Введите ваш вес ");
-            var weight = double.Parse(Console.ReadLine());
+                userController.SetNewUserDate(gender, birthDate, weight, height);
 
-            Console.WriteLine("Введите ваш рост ");
-            var height = double.Parse(Console.ReadLine());
+            }
+            Console.WriteLine(userController.CurrentUser);
+            Console.ReadLine();
+        }
 
-            var userController = new UserController(name, gender, birthDate, weight, height);
-            userController.Save();
+        private static double ParseDouble(string name)
+        {
+            while (true)
+            {
+                Console.WriteLine($"Введите {name} ");
+                if (double.TryParse(Console.ReadLine(), out double value))
+                {
+                    return value;
+                }
+                else Console.WriteLine($"Неверный формат {name}: ");
+            }
+        }
+
+        private static DateTime ParseDateTime()
+        {
+            DateTime birthDate;
+            while (true)
+            {
+                Console.WriteLine("Введите дату рождения(dd:MM:yyyy): ");
+                if (DateTime.TryParse(Console.ReadLine(), out birthDate))
+                {
+                    break;
+                }
+                else Console.WriteLine("Неверный формат даты: ");
+            }
+            return birthDate;
         }
     }
 }
