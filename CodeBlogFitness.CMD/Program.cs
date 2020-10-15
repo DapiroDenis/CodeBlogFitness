@@ -25,15 +25,6 @@ namespace CodeBlogFitness.CMD
                 double weight = ParseDouble("вес");
                 double height = ParseDouble("рост");
 
-                while (true)
-                {
-                    Console.WriteLine("Введите дату рождения(dd:MM:yyyy): ");
-                    if (DateTime.TryParse(Console.ReadLine(), out  birthDate))
-                    {
-                        break;
-                    }else Console.WriteLine("Неверный формат даты: ");
-                }
-
                 userController.SetNewUserDate(gender, birthDate, weight, height);
 
             }
