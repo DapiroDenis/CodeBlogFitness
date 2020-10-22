@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CodeBlogFitness.BL.Controller
 {
-    abstract internal class ControllerBase
+    public abstract class ControllerBase
     {
-        protected void Save<T>(string fileName, object item)
+        protected void Save(string fileName, object item)
         {
             var formatter = new BinaryFormatter();
             using (var fs = new FileStream(fileName, FileMode.Append))
@@ -19,12 +19,16 @@ namespace CodeBlogFitness.BL.Controller
             }
         }
 
-          User Load()
+        protected T Load<T>(string fileName)
         {
             var formatter = new BinaryFormatter();
+
             using (var fs = new FileStream("users.dat", FileMode.Append))
             {
-                return formatter.Deserialize(fs) as User;
+                if (formatter.Deserialize(fs) is T items)
+                { return items; }
+                else
+                { return default(T); }
             }
         }
     }

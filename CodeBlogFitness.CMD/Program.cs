@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodeBlogFitness.BL.Controller;
+using CodeBlogFitness.BL.Model;
 
 namespace CodeBlogFitness.CMD
 {
@@ -17,6 +18,7 @@ namespace CodeBlogFitness.CMD
             var name = Console.ReadLine();
 
             var userController = new UserController(name);
+            var eatingController = new EatingContoller(userController.CurrentUser);
             if (userController.IsNewUser)
             {
                 Console.WriteLine("Введите пол: ");
@@ -29,7 +31,41 @@ namespace CodeBlogFitness.CMD
 
             }
             Console.WriteLine(userController.CurrentUser);
+
+            Console.WriteLine("Что вы хотите сделать ?");
+            Console.WriteLine("E - ввести приём пищи");
+
+            var key = Console.ReadKey();
+
+            if(key.Key == ConsoleKey.E)
+            {
+                var foods = EnterEating();
+                eatingController.Add(foods.Food, foods.Weight);
+
+                foreach (var item in eatingController.Eating.Foods)
+                {
+                    Console.WriteLine($"\t{item.Key} - {item.Value}");
+                }
+            }
+
             Console.ReadLine();
+        }
+
+        private static (Food Food,double Weight) EnterEating()
+        {
+            Console.WriteLine("Введите ключ продукта: ");
+            var food = Console.ReadLine();
+
+            var calories = ParseDouble("калорийность");
+            var prots = ParseDouble("белки");
+            var fats = ParseDouble("жиры");
+            var cards = ParseDouble("углеводы");
+
+            Console.Write("Введите вес порции: ");
+            var weight = ParseDouble("вес порции");
+            var product = new Food(food, calories, prots, fats, cards);
+
+            return (Food: product,Weight: weight);
         }
 
         private static double ParseDouble(string name)

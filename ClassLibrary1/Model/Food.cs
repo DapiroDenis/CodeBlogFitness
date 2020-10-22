@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CodeBlogFitness.BL.Model
 {
+    [Serializable]
     public class Food
     {
         public string Name { get; }

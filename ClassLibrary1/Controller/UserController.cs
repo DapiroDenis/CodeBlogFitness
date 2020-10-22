@@ -12,9 +12,10 @@ namespace CodeBlogFitness.BL.Controller
     /// <summary>
     /// Контроллер пользователя 
     /// </summary>
-    public class UserController
+    public class UserController : ControllerBase
     {
-        public List<User> users { get; }
+        private const string USERS_FILE_NAME = "users.dat";
+        public List<User> Users { get; }
         public User CurrentUser { get; }
 
         public bool IsNewUser { get; } = false;
@@ -25,14 +26,14 @@ namespace CodeBlogFitness.BL.Controller
                 throw new ArgumentNullException("Имя пользователя не может быть пустым",nameof(userName)); 
             }
 
-            users = new List<User>();
+            Users = new List<User>();
 
-            CurrentUser = users.SingleOrDefault(u => u.Name == userName);
+            CurrentUser = Users.SingleOrDefault(u => u.Name == userName);
 
             if(CurrentUser == null)
             {
                 CurrentUser = new User(userName);
-                users.Add(CurrentUser);
+                Users.Add(CurrentUser);
                 IsNewUser = true;
                 Save();
             }
@@ -43,11 +44,7 @@ namespace CodeBlogFitness.BL.Controller
         /// </summary>
         public void Save()
         {
-            var formatter = new BinaryFormatter();
-            using(var fs = new FileStream("users.dat",FileMode.Append))
-            {
-                formatter.Serialize(fs, users);
-            }
+            Save(USERS_FILE_NAME, Users);
         }
 
         public void SetNewUserDate(string genderName, DateTime birthDate, double weight = 1, double height = 1)
@@ -68,7 +65,7 @@ namespace CodeBlogFitness.BL.Controller
         public User Load()
         {
             var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("users.dat", FileMode.Append))
+            using (var fs = new FileStream(USERS_FILE_NAME, FileMode.Append))
             {
                 return formatter.Deserialize(fs) as User;
             }
@@ -79,15 +76,7 @@ namespace CodeBlogFitness.BL.Controller
         /// <returns></returns>
         private List<User> GetUsersData()
         {
-            var formatter = new BinaryFormatter();
-
-            using (var fs = new FileStream("users.dat", FileMode.Append))
-            {
-                if(formatter.Deserialize(fs) is List<User> users)
-                {return users;}
-                else
-                { return new List<User>(); }
-            }
+            return Load<List<User>>(USERS_FILE_NAME) ?? new List<User>(); 
         }
     }
 }
